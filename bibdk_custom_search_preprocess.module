@@ -1,0 +1,51 @@
+<?php
+/**
+ * @file
+ * Bibliotek.dk search preprocess functions for combined form values.
+ *
+ * Since the form element ID's are different for each website,
+ * the search pre-process and javascript attach functions need to be maintained seperately.
+ */
+
+/**
+ * Implements hook_bibdk_custom_search_field_preprocess().
+ */
+function bibdk_custom_search_preprocess_bibdk_custom_search_field_preprocess($form_state) {
+  $fields = array();
+  foreach ( $form_state['complete form']['#bibdk_pre_search_process'] as $element_id => $value_ids ) { // f.ex.: '4' => array('2','5')
+    switch ($element_id) {
+      case '4':
+        if ( $form_state['values']['term4'] ) {
+          switch ($form_state['values']['term6']) {
+            case 'year_gt':
+              $fields[] = 'year>' . $form_state['values']['term4'];
+              break;
+            case 'year_lt':
+              $fields[] = 'year<' . $form_state['values']['term4'];;
+              break;
+            case 'year_eq':
+              $fields[] = 'year=' . $form_state['values']['term4'];;
+              break;
+          }
+        }
+        break;
+    }
+  }
+  return $fields;
+}
+
+
+/**
+ * Implements hook_bibdk_custom_search_add_js().
+ */
+function bibdk_custom_search_preprocess_bibdk_custom_search_add_js($element_ids=array()) {
+  $js = array();
+  foreach ( $element_ids as $element_id => $value_ids ) { // f.ex.: '4' => array('2','5')
+    switch ($element_id) {
+      case '4':
+        $js[] = drupal_get_path('module', 'bibdk_custom_search_preprocess') . '/js/bibdk_custom_search_datepicker.js';
+        break;
+    }
+  }
+  return $js;
+}
