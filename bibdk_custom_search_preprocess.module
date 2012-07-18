@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Bibliotek.dk search preprocess functions for combined form values.
+ * Bibliotek.dk custom search preprocess functions for combined form values.
  *
  * Since the form element ID's are different for each website,
  * the search pre-process and javascript attach functions need to be maintained seperately.
