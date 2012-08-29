@@ -17,17 +17,17 @@ function bibdk_custom_search_preprocess_bibdk_custom_search_field_preprocess($fo
   }
   foreach ( $form_state['complete form']['#bibdk_pre_search_process'] as $element_id => $value_ids ) { // f.ex.: '4' => array('2','5')
     switch ($element_id) {
-      case '4':
-        if ( $form_state['values']['term4'] ) {
-          switch ($form_state['values']['term6']) {
+      case '35':
+        if ( $form_state['values']['term36'] ) {
+          switch ($form_state['values']['term35']) {
             case 'year_gt':
-              $fields[] = 'year>' . $form_state['values']['term4'];
+              $fields[] = 'year>' . $form_state['values']['term36'];
               break;
             case 'year_lt':
-              $fields[] = 'year<' . $form_state['values']['term4'];;
+              $fields[] = 'year<' . $form_state['values']['term36'];;
               break;
             case 'year_eq':
-              $fields[] = 'year=' . $form_state['values']['term4'];;
+              $fields[] = 'year=' . $form_state['values']['term36'];;
               break;
           }
         }
@@ -45,7 +45,7 @@ function bibdk_custom_search_preprocess_bibdk_custom_search_add_js($element_ids=
   $js = array();
   foreach ( $element_ids as $element_id => $value_ids ) { // f.ex.: '4' => array('2','5')
     switch ($element_id) {
-      case '4':
+      case '35':
         $js[] = drupal_get_path('module', 'bibdk_custom_search_preprocess') . '/js/bibdk_custom_search_datepicker.js';
         break;
     }
