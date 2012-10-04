@@ -11,6 +11,7 @@
  * Implements hook_bibdk_custom_search_field_preprocess().
  */
 function bibdk_custom_search_preprocess_bibdk_custom_search_field_preprocess($form_state) {
+  dpm($form_state);
   $fields = array();
   if ( !isset($form_state['complete form']['#bibdk_pre_search_process']) ) {
     return $fields;
@@ -19,21 +20,26 @@ function bibdk_custom_search_preprocess_bibdk_custom_search_field_preprocess($fo
     switch ($element_id) {
       case '35':
         if ( $form_state['values']['term36'] ) {
+  dpm($form_state['values']['term36']);
           switch ($form_state['values']['term35']) {
             case 'year_gt':
-              $fields[] = 'year>' . $form_state['values']['term36'];
+              $fields[] = 'dc.date>' . $form_state['values']['term36'];
               break;
             case 'year_lt':
-              $fields[] = 'year<' . $form_state['values']['term36'];;
+              $fields[] = 'dc.date<' . $form_state['values']['term36'];;
               break;
             case 'year_eq':
-              $fields[] = 'year=' . $form_state['values']['term36'];;
+              $fields[] = 'dc.date=' . $form_state['values']['term36'];;
               break;
           }
+        } else {
+  dpm('no fields');
+          return $fields;
         }
         break;
     }
   }
+  dpm($fields);
   return $fields;
 }
 
