@@ -29,6 +29,9 @@ class BibdkCustomSearchPreprocessTestCase extends DrupalWebTestCase {
       ));
     $this->drupalLogin($this->privileged_user);
 
+    variable_set('search_active_modules', array('node' => 'node'));
+    variable_set('search_default_module', 'node');
+
   }
 
 

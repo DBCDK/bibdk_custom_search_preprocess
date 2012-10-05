@@ -32,6 +32,12 @@ function bibdk_custom_search_preprocess_bibdk_custom_search_field_preprocess($fo
           }
         }
         break;
+      case '1': // webtest case
+        if ( $form_state['values']['term1'] == 'default_value_test_1'
+          && $form_state['values']['term2'] == 'default_value_test_2' ) {
+            $fields[] = 'webtest=default_value_test_1_2';
+        }
+        break;
     }
   }
   return $fields;
