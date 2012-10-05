@@ -1,0 +1,188 @@
+<?php
+/**
+* Tests the functionality of bibdk custom search.
+*/
+class BibdkCustomSearchPreprocessTestCase extends DrupalWebTestCase {
+  protected $privileged_user;
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Bibdk Custom Search Preprocess',
+      'description' => 'Bibdk Custom Search Preprocess webtest.',
+      'group' => 'bibliotek.dk',
+    );
+  }
+
+  public function setUp() {
+
+    // Enable any modules required for the test
+    parent::setUp('bibdk_custom_search_preprocess', 'bibdk_custom_search', 'search');
+
+    menu_rebuild();
+
+    // Create and log in our privileged user.
+    $this->privileged_user = $this->drupalCreateUser(array(
+      'administer bibdk custom search pages',
+      'administer search',
+      'administer blocks',
+      'search content',
+      ));
+    $this->drupalLogin($this->privileged_user);
+
+  }
+
+
+  public function testBibdkCustomSearchPreprocessCreatePage() {
+
+    // Test creation of a custom search page.
+    $edit = array();
+    $page_title = $edit['bibdk_custom_search[0][page_title]'] = $this->randomName(8);
+    $this->drupalPost('admin/config/search/bibdk_custom_search', $edit, t('Save'));
+    $this->assertText(
+      t('The page "@page" have been created.', array('@page' => $edit['bibdk_custom_search[0][page_title]']))
+    );
+
+    // Test creation of a custom search element.
+    $edit = array();
+    $element_title = $edit['bibdk_custom_search_page_elements[0][element_title]'] = $this->randomName(8);
+    $this->drupalPost('admin/config/search/bibdk_custom_search/elements', $edit, t('Save'));
+    $this->assertText(
+      t('The element "@element" have been created.', array('@element' => $edit['bibdk_custom_search_page_elements[0][element_title]']))
+    );
+
+    // Test creation of a custom search value.
+    $edit = array();
+    $value_test_1 = $edit['bibdk_custom_search[0][value_title]'] = $this->randomName(8);
+    $this->drupalPost('admin/config/search/bibdk_custom_search/values', $edit, t('Save'));
+    $this->assertText(
+      t('The value "@value" have been created.', array('@value' => $edit['bibdk_custom_search[0][value_title]']))
+    );
+    $edit = array();
+    $value_test_2 = $edit['bibdk_custom_search[1][value_title]'] = $this->randomName(8);
+    $this->drupalPost('admin/config/search/bibdk_custom_search/values', $edit, t('Save'));
+    $this->assertText(
+      t('The value "@value" have been created.', array('@value' => $edit['bibdk_custom_search[1][value_title]']))
+    );
+
+    // Test editing a custom search value.
+    $edit = array();
+    $edit['element_value[type]'] = 'textfield';
+    $search_code_1 = $edit['element_value[search_code]'] = 'search_code_test_1';
+    $default_value_1 = $edit['element_value[default_value]'] = 'default_value_test_1';
+    $this->drupalPost('admin/config/search/bibdk_custom_search/values/1/edit', $edit, t('Save'));
+    $this->assertFieldByName(
+      'element_value[type]',
+      $edit['element_value[type]'],
+      t('The value "@value_title" have been set to a type "@type".', array('@value_title' => $value_test_1, '@type'=>$edit['element_value[type]']))
+    );
+    $this->assertFieldByName(
+      'element_value[search_code]',
+      $edit['element_value[search_code]'],
+      t('The value "@value_title" have been assigned a search code "@code".', array('@value_title' => $value_test_1, '@code'=>$edit['element_value[search_code]']))
+    );
+    $this->assertFieldByName(
+      'element_value[default_value]',
+      $edit['element_value[default_value]'],
+      t('The value "@value_title" have been assigned a search code "@code".', array('@value_title' => $value_test_1, '@code'=>$edit['element_value[default_value]']))
+    );
+    $edit = array();
+    $edit['element_value[type]'] = 'textfield';
+    $search_code_2 = $edit['element_value[search_code]'] = 'search_code_test_2';
+    $default_value_2 = $edit['element_value[default_value]'] = 'default_value_test_2';
+    $this->drupalPost('admin/config/search/bibdk_custom_search/values/2/edit', $edit, t('Save'));
+    $this->assertFieldByName(
+      'element_value[type]',
+      $edit['element_value[type]'],
+      t('The value "@value_title" have been set to a type "@type".', array('@value_title' => $value_test_2, '@type'=>$edit['element_value[type]']))
+    );
+    $this->assertFieldByName(
+      'element_value[search_code]',
+      $edit['element_value[search_code]'],
+      t('The value "@value_title" have been assigned a search code "@code".', array('@value_title' => $value_test_2, '@code'=>$edit['element_value[search_code]']))
+    );
+    $this->assertFieldByName(
+      'element_value[default_value]',
+      $edit['element_value[default_value]'],
+      t('The value "@value_title" have been assigned a search code "@code".', array('@value_title' => $value_test_2, '@code'=>$edit['element_value[default_value]']))
+    );
+
+    // Test editing a custom search element.
+    $edit = array();
+    $element_label = $edit['bibdk_custom_search_page_element[element_label]'] = $this->randomName(8);
+    $this->drupalPost('admin/config/search/bibdk_custom_search/elements/1/edit', $edit, t('Save'));
+    $this->assertFieldByName(
+      'bibdk_custom_search_page_element[element_label]',
+      $edit['bibdk_custom_search_page_element[element_label]'],
+      t('The element "@element_title" have been assigned a label "@val".', array('@element_title' => $element_title, '@val'=>$edit['bibdk_custom_search_page_element[element_label]']))
+    );
+
+    // Test adding a value to a custom search element.
+    $edit = array();
+    $edit['bibdk_custom_search_page_element_values[0][vid]'] = '1';
+    $this->drupalPost('admin/config/search/bibdk_custom_search/elements/1/edit', $edit, t('Save'));
+    $this->assertText($value_test_1);
+    $this->assertLinkByHref(
+      'admin/config/search/bibdk_custom_search/values/1/edit'
+    );
+    $edit = array();
+    $edit['bibdk_custom_search_page_element_values[1][vid]'] = '2';
+    $this->drupalPost('admin/config/search/bibdk_custom_search/elements/1/edit', $edit, t('Save'));
+    $this->assertText($value_test_2);
+    $this->assertLinkByHref(
+      'admin/config/search/bibdk_custom_search/values/2/edit'
+    );
+
+    // Test editing a custom search page.
+    $edit = array();
+    $frontpage = variable_get('site_frontpage', 'node');
+    $edit['page[menu_title]'] = $this->randomName(8);
+    $page_path = $edit['page[page_path]'] = $frontpage;
+    $this->drupalPost('admin/config/search/bibdk_custom_search/1/edit', $edit, t('Save'));
+    $this->assertFieldByName(
+      'page[menu_title]',
+      $edit['page[menu_title]'],
+      t('The page "@page_title" have been assigned a menu title "@val".', array('@page_title' => $page_title, '@val'=>$edit['page[menu_title]']))
+    );
+    $this->assertFieldByName(
+      'page[page_path]',
+      $edit['page[page_path]'],
+      t('The page "@page_title" have been assigned a path "@val".', array('@page_title' => $page_title, '@val'=>$edit['page[page_path]']))
+    );
+
+    // Test adding an element to a custom search page.
+    $edit = array();
+    $edit['elements[0][eid]'] = '1';
+    $edit['elements[0][region]'] = 'main';
+    $this->drupalPost('admin/config/search/bibdk_custom_search/1/edit', $edit, t('Save'));
+    $this->assertText($element_title);
+    $this->assertLinkByHref(
+      'admin/config/search/bibdk_custom_search/elements/1/edit'
+    );
+    $this->assertLinkByHref(
+      'admin/config/search/bibdk_custom_search/1/remove_element/1'
+    );
+
+    // Test a custom search page form.
+    $this->drupalGet($page_path);
+    $this->assertFieldByName(
+      'search_block_form'
+    );
+    $this->assertText($element_label,t('The element label "@element_label" was found',array('@element_label'=>$element_label)));
+    $this->assertFieldByName(
+      'term1'
+    );
+    $this->assertFieldByName(
+      'term2'
+    );
+
+    $edit = array();
+    $edit['search_block_form'] = $this->randomName(8);
+    $this->drupalPost($page_path, $edit, t('Search'));
+
+    $this->assertText(
+      $default_value_1
+    );
+
+  }
+
+}
