@@ -10,12 +10,12 @@
 /**
  * Implements hook_bibdk_custom_search_field_preprocess().
  */
-function bibdk_custom_search_preprocess_bibdk_custom_search_field_preprocess($form_state) {
+function bibdk_custom_search_preprocess_bibdk_custom_search_field_preprocess($form, $form_state) {
   $fields = array();
-  if ( !isset($form_state['complete form']['#bibdk_pre_search_process']) ) {
+  if ( !isset($form['#bibdk_pre_search_process']) ) {
     return $fields;
   }
-  foreach ( $form_state['complete form']['#bibdk_pre_search_process'] as $element_id => $value_ids ) { // f.ex.: '4' => array('2','5')
+  foreach ( $form['#bibdk_pre_search_process'] as $element_id => $value_ids ) { // f.ex.: '4' => array('2','5')
     switch ($element_id) {
       case '35':
         if ( $form_state['values']['term36'] ) {

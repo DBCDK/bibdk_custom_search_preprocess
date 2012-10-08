@@ -182,8 +182,11 @@ class BibdkCustomSearchPreprocessTestCase extends DrupalWebTestCase {
     $edit['search_block_form'] = $this->randomName(8);
     $this->drupalPost($page_path, $edit, t('Search'));
 
-    $this->assertText(
-      $default_value_1
+    $keys_value = $edit['search_block_form'] . ' AND (webtest=default_value_test_1_2 AND search_code_test_1=default_value_test_1 AND search_code_test_2=default_value_test_2)';
+    $this->assertFieldByName(
+      'keys',
+      $keys_value,
+      t('The search included the preprocessed search expression "webtest=default_value_test_1_2".', array())
     );
 
   }
