@@ -21,13 +21,13 @@ function bibdk_custom_search_preprocess_bibdk_custom_search_field_preprocess($fo
         if ( $form_state['values']['term36'] ) {
           switch ($form_state['values']['term35']) {
             case 'year_gt':
-              $fields[] = 'year>' . $form_state['values']['term36'];
+              $fields[] = 'dkcclterm.år >' . $form_state['values']['term36'];
               break;
             case 'year_lt':
-              $fields[] = 'year<' . $form_state['values']['term36'];;
+              $fields[] = 'dkcclterm.år <' . $form_state['values']['term36'];;
               break;
             case 'year_eq':
-              $fields[] = 'year=' . $form_state['values']['term36'];;
+              $fields[] = 'dkcclterm.år =' . $form_state['values']['term36'];;
               break;
           }
         }
