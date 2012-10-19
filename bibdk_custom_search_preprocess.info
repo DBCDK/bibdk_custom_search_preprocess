@@ -1,6 +1,8 @@
 name = Bibliotek.dk extended search preprocess functions
 description = Provides search preprocess functions for combined form values.
 core = 7.x
+version = 0.1
 package = "Bibliotek.dk"
 dependencies[] = bibdk_custom_search
 
+files[] = bibdk_custom_search_preprocess.test
