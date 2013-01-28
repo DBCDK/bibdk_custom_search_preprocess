@@ -18,16 +18,16 @@ function bibdk_custom_search_preprocess_bibdk_custom_search_field_preprocess($fo
   foreach ( $form['#bibdk_pre_search_process'] as $element_id => $value_ids ) { // f.ex.: '4' => array('2','5')
     switch ($element_id) {
       case '56558f6c-0175-3a14-71c9-eac27a76cc85': //år i elements
-        if ( $form_state['values']['termda48923f-e5ba-5ef4-ad4f-c8aab6767a83'] ) { //år, årstal
-          switch ($form_state['values']['term3021bc15-1305-10f4-2112-d08af39718bf']) { //år, operator
+        if ( $form_state['values']['da48923f-e5ba-5ef4-ad4f-c8aab6767a83'] ) { //år, årstal
+          switch ($form_state['values']['3021bc15-1305-10f4-2112-d08af39718bf']) { //år, operator
             case 'year_gt':
-              $fields[] = 'dkcclterm.år>' . $form_state['values']['termda48923f-e5ba-5ef4-ad4f-c8aab6767a83']; //år, årstal
+              $fields[] = 'dkcclterm.år>' . $form_state['values']['da48923f-e5ba-5ef4-ad4f-c8aab6767a83']; //år, årstal
               break;
             case 'year_lt':
-              $fields[] = 'dkcclterm.år<' . $form_state['values']['termda48923f-e5ba-5ef4-ad4f-c8aab6767a83']; //år, årstal
+              $fields[] = 'dkcclterm.år<' . $form_state['values']['da48923f-e5ba-5ef4-ad4f-c8aab6767a83']; //år, årstal
               break;
             case 'year_eq':
-              $fields[] = 'dkcclterm.år=' . $form_state['values']['termda48923f-e5ba-5ef4-ad4f-c8aab6767a83']; //år, årstal
+              $fields[] = 'dkcclterm.år=' . $form_state['values']['da48923f-e5ba-5ef4-ad4f-c8aab6767a83']; //år, årstal
               break;
           }
         }
