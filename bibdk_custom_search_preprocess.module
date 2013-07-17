@@ -3,46 +3,34 @@
  * @file
  * Bibliotek.dk custom search preprocess functions for combined form values.
  *
- * Since the form element ID's are different for each website,
+ * Since the form element ID's and form value search codes are different for each website,
  * the search pre-process and javascript attach functions need to be maintained seperately.
  */
 
 /**
- * Implements hook_bibdk_custom_search_field_preprocess().
+ * Implements hook_ting_openformat_qe_preprocess().
  */
-function bibdk_custom_search_preprocess_bibdk_custom_search_field_preprocess($form, $form_state) {
-  $fields = array();
-  if ( !isset($form['#bibdk_pre_search_process']) ) {
-    return $fields;
-  }
-  foreach ( $form['#bibdk_pre_search_process'] as $element_id => $value_ids ) { // f.ex.: '4' => array('2','5')
-    switch ($element_id) {
-      case '56558f6c-0175-3a14-71c9-eac27a76cc85': //år i elements
-        if ( $form_state['values']['da48923f-e5ba-5ef4-ad4f-c8aab6767a83'] ) { //år, årstal
-          switch ($form_state['values']['3021bc15-1305-10f4-2112-d08af39718bf']) { //år, operator
-            case 'year_gt':
-              $fields[] = 'dkcclterm.år>' . $form_state['values']['da48923f-e5ba-5ef4-ad4f-c8aab6767a83']; //år, årstal
-              break;
-            case 'year_lt':
-              $fields[] = 'dkcclterm.år<' . $form_state['values']['da48923f-e5ba-5ef4-ad4f-c8aab6767a83']; //år, årstal
-              break;
-            case 'year_eq':
-              $fields[] = 'dkcclterm.år=' . $form_state['values']['da48923f-e5ba-5ef4-ad4f-c8aab6767a83']; //år, årstal
-              break;
-          }
-        }
-        break;
-      case 'webtest-element-1': // webtest case
-        if ( $form_state['values']['termwebtest-value-1'] == 'default_value_test_1'
-          && $form_state['values']['termwebtest-value-2'] == 'default_value_test_2' ) {
-            $fields[] = 'webtest=default_value_test_1_2';
-        }
-        break;
+function bibdk_custom_search_preprocess_ting_openformat_qe_preprocess($qe) {
+  $qe['#preprocessed'] = array();
+  if ( isset($qe['year.op']) ) {
+    if ( isset($qe['year.value']) ) {
+      switch ( $qe['year.op'][0] ) { // år, operator
+        case 'year_gt':
+          $qe['#preprocessed'][] = 'dkcclterm.år>' . $qe['year.value'][0]; //år, årstal
+          break;
+        case 'year_lt':
+          $qe['#preprocessed'][] = 'dkcclterm.år<' . $qe['year.value'][0]; //år, årstal
+          break;
+        case 'year_eq':
+          $qe['#preprocessed'][] = 'dkcclterm.år=' . $qe['year.value'][0]; //år, årstal
+          break;
+      }
+      unset($qe['year.value']);
     }
+    unset($qe['year.op']);
   }
-  return $fields;
+  return $qe;
 }
-
 
 /**
  * Implements hook_bibdk_custom_search_add_js().
