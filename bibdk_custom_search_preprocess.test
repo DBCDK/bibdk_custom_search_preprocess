@@ -9,7 +9,7 @@ class BibdkCustomSearchPreprocessTestCase extends DrupalWebTestCase {
     return array(
       'name' => 'Bibdk Custom Search Preprocess',
       'description' => 'Bibdk Custom Search Preprocess webtest.',
-      'group' => 'bibliotek.dk',
+      'group' => 'Bibliotek.dk  - Custom Search',
     );
   }
 
