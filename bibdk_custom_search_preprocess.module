@@ -13,6 +13,8 @@
 function bibdk_custom_search_preprocess_ting_openformat_qe_preprocess($qe) {
   $qe['#preprocessed'] = array();
   $qe = _bibdk_custom_search_preprocess_year($qe);
+  $and = _bibdk_custom_search_get_cql('AND');
+  $qe = _bibdk_custom_search_preprocess_foo($qe, $and);
   return $qe;
 }
 
@@ -42,6 +44,29 @@ function _bibdk_custom_search_preprocess_year($qe) {
     }
     unset($qe['year.op']);
   }
+  return $qe;
+}
+
+/**
+ * Processes searches containing multiple dkcclterm.fo which must be
+ * concatinated with AND operators.
+ *
+ * !!! this is the only known term which must be concatinated this way. !!!
+ *
+ * @param array $qe
+ * @param string $op
+ * @return array
+ */
+function _bibdk_custom_search_preprocess_foo($qe, $op) {
+  if (isset($qe['dkcclterm.fo']) && is_array($qe['dkcclterm.fo'])) {
+    $f = function ($e) {
+      return 'dkcclterm.fo=' . $e;
+    };
+    $foos = join(array_map($f, $qe['dkcclterm.fo']), $op);
+    $qe['#preprocessed'][] = "($foos)";
+    unset($qe['dkcclterm.fo']);
+  }
+
   return $qe;
 }
 

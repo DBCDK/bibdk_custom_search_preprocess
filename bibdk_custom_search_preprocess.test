@@ -236,6 +236,37 @@ class BibdkCustomSearchPreprocessUnitTestCase extends DrupalUnitTestCase {
     parent::setUp();
   }
 
+  public function testFoo() {
+    $no_match = array(
+      'dkcclterm.lo' => array('test', 'test2'),
+    );
+    $op = ' AND ';
+    $result_no_match = _bibdk_custom_search_preprocess_foo($no_match, $op);
+    $this->assertTrue($no_match == $result_no_match, 'No preproccessing of dkcclterm.fo has happened.');
+
+    $match1 = array(
+      'dkcclterm.fo' => array('foo1'),
+    );
+    $result1 = _bibdk_custom_search_preprocess_foo($match1, $op);
+    $this->assertTrue(isset($result1['#preprocessed']) && is_array($result1['#preprocessed']), 'Preprocessing has happened of dkcclterm.fo.');
+    $this->assertTrue($result1['#preprocessed'][0] == '(dkcclterm.fo=foo1)', 'Single dkcclterm.fo process.');
+    $this->assertFalse(isset($result1['dkcclterm.fo']), 'dkcclterm.fo removed when preproccessing is done.');
+
+    $match2 = array(
+      'dkcclterm.fo' => array('foo1', 'foo2'),
+    );
+    $result2 = _bibdk_custom_search_preprocess_foo($match2, $op);
+    $this->assertTrue(isset($result2['#preprocessed']) && is_array($result2['#preprocessed']), 'Preprocessing has happened of dkcclterm.fo.');
+    $this->assertTrue($result2['#preprocessed'][0] == "(dkcclterm.fo=foo1${op}dkcclterm.fo=foo2)", 'Two dkcclterm.fo process.');
+    $this->assertFalse(isset($result2['dkcclterm.fo']), 'dkcclterm.fo removed when preproccessing is done.');
+
+    $non_array = array(
+      'dkcclterm.fo' => 'test',
+    );
+    $result_non = _bibdk_custom_search_preprocess_foo($non_array, $op);
+    $this->assertTrue($result_non == $non_array, 'dkcclterm.fo not preprocessed if not array.');
+  }
+
   public function testYear() {
     $no_year = array();
     $no_result = _bibdk_custom_search_preprocess_year($no_year);
