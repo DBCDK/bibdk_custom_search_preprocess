@@ -12,18 +12,31 @@
  */
 function bibdk_custom_search_preprocess_ting_openformat_qe_preprocess($qe) {
   $qe['#preprocessed'] = array();
-  if ( isset($qe['year.op']) ) {
-    if ( isset($qe['year.value']) ) {
-      switch ( $qe['year.op'][0] ) { // år, operator
-        case 'year_gt':
-          $qe['#preprocessed'][] = 'dkcclterm.år>' . $qe['year.value'][0]; //år, årstal
-          break;
-        case 'year_lt':
-          $qe['#preprocessed'][] = 'dkcclterm.år<' . $qe['year.value'][0]; //år, årstal
-          break;
-        case 'year_eq':
-          $qe['#preprocessed'][] = 'dkcclterm.år=' . $qe['year.value'][0]; //år, årstal
-          break;
+  $qe = _bibdk_custom_search_preprocess_year($qe);
+  return $qe;
+}
+
+/**
+ * Processes searches containing year as a search parameter.
+ *
+ * @param array $qe
+ * @return array
+ */
+function _bibdk_custom_search_preprocess_year($qe) {
+  if (isset($qe['year.op'])) {
+    if (isset($qe['year.value'])) {
+      if(isset($qe['year.op'][0])) {
+        switch ( $qe['year.op'][0] ) { // år, operator
+          case 'year_gt':
+            $qe['#preprocessed'][] = 'dkcclterm.år>' . $qe['year.value'][0]; //år, årstal
+            break;
+          case 'year_lt':
+            $qe['#preprocessed'][] = 'dkcclterm.år<' . $qe['year.value'][0]; //år, årstal
+            break;
+          case 'year_eq':
+            $qe['#preprocessed'][] = 'dkcclterm.år=' . $qe['year.value'][0]; //år, årstal
+            break;
+        }
       }
       unset($qe['year.value']);
     }

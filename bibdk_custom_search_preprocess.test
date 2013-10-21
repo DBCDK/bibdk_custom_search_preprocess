@@ -221,3 +221,60 @@ class BibdkCustomSearchPreprocessTestCase extends DrupalWebTestCase {
   }
 
 }
+
+class BibdkCustomSearchPreprocessUnitTestCase extends DrupalUnitTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Bibdk Custom Search Preprocess',
+      'description' => 'Bibdk Custom Search Preprocess unittest.',
+      'group' => 'Bibliotek.dk  - Custom Search',
+    );
+  }
+
+  public function setUp() {
+    module_load_include('module', 'bibdk_custom_search_preprocess');
+    parent::setUp();
+  }
+
+  public function testYear() {
+    $no_year = array();
+    $no_result = _bibdk_custom_search_preprocess_year($no_year);
+    $this->assertTrue($no_result == $no_year, 'No preproccessing of year comparison.');
+
+    $year_value_only = array(
+      'year.value' => array('2000'),
+    );
+    $value_only_result = _bibdk_custom_search_preprocess_year($year_value_only);
+    $this->assertTrue(isset($value_only_result['year.value']), 'No preprocessing with out year.op.');
+
+    $year_op_empty = array(
+      'year.value' => array('2000'),
+      'year.op' => '',
+    );
+    $remove_op = _bibdk_custom_search_preprocess_year($year_op_empty);
+    $this->assertFalse(isset($remove_op['year.op']), 'Removed year.op');
+    $this->assertFalse(isset($remove_op['year.value']), 'Removed year.value');
+
+    $year_op_after = array(
+      'year.value' => array('2000'),
+      'year.op' => array('year_gt'),
+    );
+    $after = _bibdk_custom_search_preprocess_year($year_op_after);
+    $this->assertTrue($after['#preprocessed'][0] == 'dkcclterm.år>2000', 'After 2000.');
+
+    $year_op_before = array(
+      'year.value' => array('2000'),
+      'year.op' => array('year_lt'),
+    );
+    $before = _bibdk_custom_search_preprocess_year($year_op_before);
+    $this->assertTrue($before['#preprocessed'][0] == 'dkcclterm.år<2000', 'Before 2000.');
+
+    $year_op_equal = array(
+      'year.value' => array('2000'),
+      'year.op' => array('year_eq'),
+    );
+    $equal = _bibdk_custom_search_preprocess_year($year_op_equal);
+    $this->assertTrue($equal['#preprocessed'][0] == 'dkcclterm.år=2000', 'In 2000.');
+
+  }
+}
