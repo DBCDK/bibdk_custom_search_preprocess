@@ -221,3 +221,91 @@ class BibdkCustomSearchPreprocessTestCase extends DrupalWebTestCase {
   }
 
 }
+
+class BibdkCustomSearchPreprocessUnitTestCase extends DrupalUnitTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Bibdk Custom Search Preprocess',
+      'description' => 'Bibdk Custom Search Preprocess unittest.',
+      'group' => 'Bibliotek.dk  - Custom Search',
+    );
+  }
+
+  public function setUp() {
+    module_load_include('module', 'bibdk_custom_search_preprocess');
+    parent::setUp();
+  }
+
+  public function testFoo() {
+    $no_match = array(
+      'dkcclterm.lo' => array('test', 'test2'),
+    );
+    $op = ' AND ';
+    $result_no_match = _bibdk_custom_search_preprocess_foo($no_match, $op);
+    $this->assertTrue($no_match == $result_no_match, 'No preproccessing of dkcclterm.fo has happened.');
+
+    $match1 = array(
+      'dkcclterm.fo' => array('foo1'),
+    );
+    $result1 = _bibdk_custom_search_preprocess_foo($match1, $op);
+    $this->assertTrue(isset($result1['#preprocessed']) && is_array($result1['#preprocessed']), 'Preprocessing has happened of dkcclterm.fo.');
+    $this->assertTrue($result1['#preprocessed'][0] == '(dkcclterm.fo=foo1)', 'Single dkcclterm.fo process.');
+    $this->assertFalse(isset($result1['dkcclterm.fo']), 'dkcclterm.fo removed when preproccessing is done.');
+
+    $match2 = array(
+      'dkcclterm.fo' => array('foo1', 'foo2'),
+    );
+    $result2 = _bibdk_custom_search_preprocess_foo($match2, $op);
+    $this->assertTrue(isset($result2['#preprocessed']) && is_array($result2['#preprocessed']), 'Preprocessing has happened of dkcclterm.fo.');
+    $this->assertTrue($result2['#preprocessed'][0] == "(dkcclterm.fo=foo1${op}dkcclterm.fo=foo2)", 'Two dkcclterm.fo process.');
+    $this->assertFalse(isset($result2['dkcclterm.fo']), 'dkcclterm.fo removed when preproccessing is done.');
+
+    $non_array = array(
+      'dkcclterm.fo' => 'test',
+    );
+    $result_non = _bibdk_custom_search_preprocess_foo($non_array, $op);
+    $this->assertTrue($result_non == $non_array, 'dkcclterm.fo not preprocessed if not array.');
+  }
+
+  public function testYear() {
+    $no_year = array();
+    $no_result = _bibdk_custom_search_preprocess_year($no_year);
+    $this->assertTrue($no_result == $no_year, 'No preproccessing of year comparison.');
+
+    $year_value_only = array(
+      'year.value' => array('2000'),
+    );
+    $value_only_result = _bibdk_custom_search_preprocess_year($year_value_only);
+    $this->assertTrue(isset($value_only_result['year.value']), 'No preprocessing with out year.op.');
+
+    $year_op_empty = array(
+      'year.value' => array('2000'),
+      'year.op' => '',
+    );
+    $remove_op = _bibdk_custom_search_preprocess_year($year_op_empty);
+    $this->assertFalse(isset($remove_op['year.op']), 'Removed year.op');
+    $this->assertFalse(isset($remove_op['year.value']), 'Removed year.value');
+
+    $year_op_after = array(
+      'year.value' => array('2000'),
+      'year.op' => array('year_gt'),
+    );
+    $after = _bibdk_custom_search_preprocess_year($year_op_after);
+    $this->assertTrue($after['#preprocessed'][0] == 'dkcclterm.år>2000', 'After 2000.');
+
+    $year_op_before = array(
+      'year.value' => array('2000'),
+      'year.op' => array('year_lt'),
+    );
+    $before = _bibdk_custom_search_preprocess_year($year_op_before);
+    $this->assertTrue($before['#preprocessed'][0] == 'dkcclterm.år<2000', 'Before 2000.');
+
+    $year_op_equal = array(
+      'year.value' => array('2000'),
+      'year.op' => array('year_eq'),
+    );
+    $equal = _bibdk_custom_search_preprocess_year($year_op_equal);
+    $this->assertTrue($equal['#preprocessed'][0] == 'dkcclterm.år=2000', 'In 2000.');
+
+  }
+}
