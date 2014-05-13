@@ -308,4 +308,15 @@ class BibdkCustomSearchPreprocessUnitTestCase extends DrupalUnitTestCase {
     $this->assertTrue($equal['#preprocessed'][0] == 'dkcclterm.år=2000', 'In 2000.');
 
   }
+
+  public function test_bibdk_custom_search_preprocess_query() {
+    $no_query = array();
+    $no_result = _bibdk_custom_search_preprocess_query($no_query);
+    $this->assertTrue($no_result == array(), 'No preprocessing query');
+
+    $query = array('query' => 'foo');
+    $query_processed = _bibdk_custom_search_preprocess_query($query);
+    $this->assertTrue($query_processed['#preprocessed'][0] == '(foo)', 'Query has been preprocessed');
+  }
+
 }
