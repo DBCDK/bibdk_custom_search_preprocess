@@ -240,7 +240,7 @@ class BibdkCustomSearchPreprocessUnitTestCase extends DrupalUnitTestCase {
     $no_match = array(
       'dkcclterm.lo' => array('test', 'test2'),
     );
-    $op = ' AND ';
+    $op = ' and ';
     $result_no_match = _bibdk_custom_search_preprocess_foo($no_match, $op);
     $this->assertTrue($no_match == $result_no_match, 'No preproccessing of dkcclterm.fo has happened.');
 
