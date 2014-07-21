@@ -14,7 +14,8 @@ function bibdk_custom_search_preprocess_ting_openformat_qe_preprocess($qe) {
   $qe['#preprocessed'] = array();
   $qe  = _bibdk_custom_search_preprocess_na_terms($qe);
   $qe  = _bibdk_custom_search_preprocess_year($qe);
-  $qe  = _bibdk_custom_search_preprocess_foo($qe, CQL_AND);
+  $and = _bibdk_custom_search_get_cql('AND');
+  $qe  = _bibdk_custom_search_preprocess_foo($qe, $and);
   $qe  = _bibdk_custom_search_preprocess_query($qe);
   return $qe;
 }
@@ -26,16 +27,18 @@ function bibdk_custom_search_preprocess_ting_openformat_qe_preprocess($qe) {
  * @return array
  */
 function _bibdk_custom_search_preprocess_na_terms($qe) {
+  $or  = _bibdk_custom_search_get_cql('OR');
+  $and = _bibdk_custom_search_get_cql('AND');
   if ( isset($qe['n/a']) ) {
     $values = array();
     foreach ( $qe['n/a'] as $key => $terms ) {
       foreach ( $terms as $n => $term ) {
         $terms[$n] = '(' . $term . ')';
       }
-      $values[] = '(' . implode(CQL_OR, $terms) . ')';
+      $values[] = '(' . implode($or,$terms) . ')';
     }
     if ( sizeof($values) > 0 ) {
-      $qe['#preprocessed'][] = '(' . implode(CQL_AND, $values) . ')';
+      $qe['#preprocessed'][] = '(' . implode($and,$values) . ')';
     }
     unset($qe['n/a']);
   }
