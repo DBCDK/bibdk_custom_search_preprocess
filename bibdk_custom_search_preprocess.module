@@ -103,7 +103,11 @@ function _bibdk_custom_search_preprocess_foo($qe, $op) {
  */
 function _bibdk_custom_search_preprocess_query($qe) {
   if (isset($qe['query'])) {
-    $qe['#preprocessed'][] = '(' . $qe['query'] . ')';
+    $q = $qe['query'];
+    if(strpos($q, '\'') === false && strpos($q, '=') === false) {
+      $q = '\'' . $q . '\'';
+    }
+    $qe['#preprocessed'][] = '(' . $q . ')';
     unset($qe['query']);
   }
   return $qe;
