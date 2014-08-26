@@ -102,12 +102,8 @@ function _bibdk_custom_search_preprocess_foo($qe, $op) {
  * @return array
  */
 function _bibdk_custom_search_preprocess_query($qe) {
-  if (isset($qe['query'])) {
-    $q = $qe['query'];
-    if(strpos($q, '\'') === false && strpos($q, '=') === false) {
-      $q = '\'' . $q . '\'';
-    }
-    $qe['#preprocessed'][] = '(' . $q . ')';
+  if (!empty($qe['query'])) {
+    $qe['#preprocessed'][] = '(' . ting_openformat_string_to_cql($qe['query']) . ')';
     unset($qe['query']);
   }
   return $qe;
