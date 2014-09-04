@@ -30,7 +30,7 @@ function _bibdk_custom_search_preprocess_na_terms($qe) {
     $values = array();
     foreach ( $qe['n/a'] as $key => $terms ) {
       foreach ( $terms as $n => $term ) {
-        $terms[$n] = '(' . $term . ')';
+        $terms[$n] = '(' . url_decode($term) . ')';
       }
       $values[] = '(' . implode(CQL_OR, $terms) . ')';
     }
