@@ -85,7 +85,7 @@ function _bibdk_custom_search_preprocess_year($qe) {
 function _bibdk_custom_search_preprocess_foo($qe, $op) {
   if (isset($qe['dkcclterm.fo']) && is_array($qe['dkcclterm.fo'])) {
     $f = function ($e) {
-      return 'dkcclterm.fo=' . $e;
+      return 'dkcclterm.fo=(' . ting_openformat_string_to_cql($e) . ')';
     };
     $foos = join(array_map($f, $qe['dkcclterm.fo']), $op);
     $qe['#preprocessed'][] = "($foos)";
