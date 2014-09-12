@@ -30,7 +30,7 @@ function _bibdk_custom_search_preprocess_na_terms($qe) {
     $values = array();
     foreach ( $qe['n/a'] as $key => $terms ) {
       foreach ( $terms as $n => $term ) {
-        $terms[$n] = '(' . $term . ')';
+        $terms[$n] = '(' . urldecode($term) . ')';
       }
       $values[] = '(' . implode(CQL_OR, $terms) . ')';
     }
@@ -52,16 +52,19 @@ function _bibdk_custom_search_preprocess_na_terms($qe) {
 function _bibdk_custom_search_preprocess_year($qe) {
   if (isset($qe['year.op'])) {
     if (isset($qe['year.value'])) {
+      $value = urldecode($qe['year.value'][0]);
       if(isset($qe['year.op'][0])) {
-        switch ( $qe['year.op'][0] ) { // år, operator
+        $operator = urldecode($qe['year.op'][0]);
+        $operator = str_replace('"', '', $operator);
+        switch ( $operator ) { // år, operator
           case 'year_gt':
-            $qe['#preprocessed'][] = 'dkcclterm.år>' . $qe['year.value'][0]; //år, årstal
+            $qe['#preprocessed'][] = 'dkcclterm.år>' . $value; //år, årstal
             break;
           case 'year_lt':
-            $qe['#preprocessed'][] = 'dkcclterm.år<' . $qe['year.value'][0]; //år, årstal
+            $qe['#preprocessed'][] = 'dkcclterm.år<' . $value; //år, årstal
             break;
           case 'year_eq':
-            $qe['#preprocessed'][] = 'dkcclterm.år=' . $qe['year.value'][0]; //år, årstal
+            $qe['#preprocessed'][] = 'dkcclterm.år=' . $value; //år, årstal
             break;
         }
       }
@@ -85,7 +88,7 @@ function _bibdk_custom_search_preprocess_year($qe) {
 function _bibdk_custom_search_preprocess_foo($qe, $op) {
   if (isset($qe['dkcclterm.fo']) && is_array($qe['dkcclterm.fo'])) {
     $f = function ($e) {
-      return 'dkcclterm.fo=' . $e;
+      return 'dkcclterm.fo=(' . ting_openformat_string_to_cql($e) . ')';
     };
     $foos = join(array_map($f, $qe['dkcclterm.fo']), $op);
     $qe['#preprocessed'][] = "($foos)";
@@ -103,7 +106,8 @@ function _bibdk_custom_search_preprocess_foo($qe, $op) {
  */
 function _bibdk_custom_search_preprocess_query($qe) {
   if (!empty($qe['query'])) {
-    $qe['#preprocessed'][] = '(' . ting_openformat_string_to_cql($qe['query']) . ')';
+    $q = urldecode($qe['query']);
+    $qe['#preprocessed'][] = '(' . ting_openformat_string_to_cql($q) . ')';
     unset($qe['query']);
   }
   return $qe;

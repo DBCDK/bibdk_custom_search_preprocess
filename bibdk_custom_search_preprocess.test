@@ -250,7 +250,7 @@ class BibdkCustomSearchPreprocessUnitTestCase extends DrupalUnitTestCase {
     );
     $result1 = _bibdk_custom_search_preprocess_foo($match1, $op);
     $this->assertTrue(isset($result1['#preprocessed']) && is_array($result1['#preprocessed']), 'Preprocessing has happened of dkcclterm.fo.');
-    $this->assertTrue($result1['#preprocessed'][0] == '(dkcclterm.fo=foo1)', 'Single dkcclterm.fo process.');
+    $this->assertTrue($result1['#preprocessed'][0] == '(dkcclterm.fo=(foo1))', 'Single dkcclterm.fo process.');
     $this->assertFalse(isset($result1['dkcclterm.fo']), 'dkcclterm.fo removed when preproccessing is done.');
 
     $match2 = array(
@@ -258,7 +258,7 @@ class BibdkCustomSearchPreprocessUnitTestCase extends DrupalUnitTestCase {
     );
     $result2 = _bibdk_custom_search_preprocess_foo($match2, $op);
     $this->assertTrue(isset($result2['#preprocessed']) && is_array($result2['#preprocessed']), 'Preprocessing has happened of dkcclterm.fo.');
-    $this->assertTrue($result2['#preprocessed'][0] == "(dkcclterm.fo=foo1${op}dkcclterm.fo=foo2)", 'Two dkcclterm.fo process.');
+    $this->assertTrue($result2['#preprocessed'][0] == "(dkcclterm.fo=(foo1)${op}dkcclterm.fo=(foo2))", 'Two dkcclterm.fo process.');
     $this->assertFalse(isset($result2['dkcclterm.fo']), 'dkcclterm.fo removed when preproccessing is done.');
 
     $non_array = array(
@@ -317,11 +317,15 @@ class BibdkCustomSearchPreprocessUnitTestCase extends DrupalUnitTestCase {
 
     $query = array('query' => 'foo');
     $query_processed = _bibdk_custom_search_preprocess_query($query);
-    $this->assertTrue($query_processed['#preprocessed'][0] == '("foo")', 'Query has been preprocessed');
+    $this->assertTrue($query_processed['#preprocessed'][0] == '(foo)', 'Query has been preprocessed');
 
     $query = array('query' => '"foo bar"');
     $query_processed = _bibdk_custom_search_preprocess_query($query);
     $this->assertTrue($query_processed['#preprocessed'][0] == '("foo bar")', 'Query has been preprocessed');
+
+    $query = array('query' => 'foo bar');
+    $query_processed = _bibdk_custom_search_preprocess_query($query);
+    $this->assertTrue($query_processed['#preprocessed'][0] == '(foo and bar)', 'Query has been preprocessed');
 
 
   }
